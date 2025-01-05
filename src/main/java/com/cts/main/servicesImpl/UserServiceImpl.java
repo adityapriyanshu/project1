@@ -1,53 +1,3 @@
-//package com.cts.main.servicesImpl;
-//
-//import java.util.List;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.stereotype.Service;
-//
-//import com.cts.main.entities.User;
-//import com.cts.main.repository.UserRepository;
-//import com.cts.main.services.UserService;
-//
-//@Service
-//public class UserServiceImpl implements UserService {
-//
-//	@Autowired
-//	private UserRepository userRepository;
-//	
-//	@Autowired
-//	private PasswordEncoder password;
-//	
-//	@Override
-//	public User adduser(User user) {
-//		// TODO Auto-generated method stub
-//		user.setPassword(password.encode(user.getPassword()));
-//		return userRepository.save(user);
-//	}
-//	
-//	@Override
-//	public List<User> getuser() {
-//		return userRepository.findAll();
-//	}
-//
-//	@Override
-//	public ResponseEntity<String> updateuser(User user) {
-////		User user1 =User.builder()
-////				.username(user.getUsername())
-////				.password(password.encode(user.getPassword()))
-////				.Roles(user.getRoles())
-////				.build();
-//		if(userRepository.existsById(user.getUser_id())) {
-//			userRepository.save(user);
-//		}
-//		return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
-//	}
-//
-//}
-
 package com.cts.main.servicesImpl;
 
 import java.util.List;
@@ -57,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -102,27 +53,47 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAll();
 	}
 
-//	@Override
-//	public ResponseEntity<String> updateuser(UserDTO userDTO) {
 //
-//		// finding user by user id. If not found call else statement
+//	@Override
+//	public ResponseEntity<ApiResponse<User>> updateuser(UserDTO userDTO) {
 //		Optional<User> optionalUser = userRepository.findById(userDTO.getUser_id());
 //		if (optionalUser.isPresent()) {
 //			User user = optionalUser.get();
-//
-//			// Check if the new username already exists and is not the current user's
-//			// username
 //			if (!user.getUsername().equals(userDTO.getUsername())
 //					&& userRepository.existsByUsername(userDTO.getUsername())) {
-//				return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists! Try different.");
+//				return ResponseEntity.status(HttpStatus.CONFLICT)
+//						.body(new ApiResponse<>("Username already exists! Try different.", null));
 //			}
 //			user.setUsername(userDTO.getUsername());
 //			user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 //			user.setRoles(userDTO.getRoles());
 //			userRepository.save(user);
-//			return ResponseEntity.status(HttpStatus.OK).body("User updated successfully!");
+//			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("User updated successfully!", user));
 //		} else {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found!");
+//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("User not found!", null));
+//		}
+//	}
+
+//	@Override
+//	public ResponseEntity<ApiResponse<User>> updateuser(UserDTO userDTO) {
+//		Optional<User> optionalUser = userRepository.findById(userDTO.getUser_id());
+//		
+//		// check if a user with same user-name is present.
+//		if (optionalUser.isPresent()) {
+//			User user = optionalUser.get();
+//			if (!user.getUsername().equals(userDTO.getUsername())
+//					&& userRepository.existsByUsername(userDTO.getUsername())) {
+//				return ResponseEntity.status(HttpStatus.CONFLICT)
+//						.body(new ApiResponse<>("Username already exists! Try different.", null));
+//			}
+//			
+//			user.setUsername(userDTO.getUsername());
+//			user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+//			user.setRoles(userDTO.getRoles());
+//			userRepository.save(user);
+//			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("User updated successfully!", user));
+//		} else {
+//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("User not found!", null));
 //		}
 //	}
 
@@ -131,6 +102,21 @@ public class UserServiceImpl implements UserService {
 		Optional<User> optionalUser = userRepository.findById(userDTO.getUser_id());
 		if (optionalUser.isPresent()) {
 			User user = optionalUser.get();
+			
+			String authenticatedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+			
+			boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+					.anyMatch(grantedAuthority -> "ROLE_ADMIN".equals(grantedAuthority.getAuthority()));
+			
+			
+			if ("ROLE_ADMIN".equals(userDTO.getRoles()) && !isAdmin) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+						new ApiResponse<>("You do not have permission to assign the role of 'ROLE_ADMIN'.", null));
+			}
+			if (!isAdmin && !authenticatedUsername.equals(user.getUsername())) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN)
+						.body(new ApiResponse<>("You do not have permission to update this user.", null));
+			}
 			if (!user.getUsername().equals(userDTO.getUsername())
 					&& userRepository.existsByUsername(userDTO.getUsername())) {
 				return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -145,4 +131,7 @@ public class UserServiceImpl implements UserService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("User not found!", null));
 		}
 	}
+
+	
+
 }
