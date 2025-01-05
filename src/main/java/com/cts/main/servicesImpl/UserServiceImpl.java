@@ -53,49 +53,6 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAll();
 	}
 
-//
-//	@Override
-//	public ResponseEntity<ApiResponse<User>> updateuser(UserDTO userDTO) {
-//		Optional<User> optionalUser = userRepository.findById(userDTO.getUser_id());
-//		if (optionalUser.isPresent()) {
-//			User user = optionalUser.get();
-//			if (!user.getUsername().equals(userDTO.getUsername())
-//					&& userRepository.existsByUsername(userDTO.getUsername())) {
-//				return ResponseEntity.status(HttpStatus.CONFLICT)
-//						.body(new ApiResponse<>("Username already exists! Try different.", null));
-//			}
-//			user.setUsername(userDTO.getUsername());
-//			user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-//			user.setRoles(userDTO.getRoles());
-//			userRepository.save(user);
-//			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("User updated successfully!", user));
-//		} else {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("User not found!", null));
-//		}
-//	}
-
-//	@Override
-//	public ResponseEntity<ApiResponse<User>> updateuser(UserDTO userDTO) {
-//		Optional<User> optionalUser = userRepository.findById(userDTO.getUser_id());
-//		
-//		// check if a user with same user-name is present.
-//		if (optionalUser.isPresent()) {
-//			User user = optionalUser.get();
-//			if (!user.getUsername().equals(userDTO.getUsername())
-//					&& userRepository.existsByUsername(userDTO.getUsername())) {
-//				return ResponseEntity.status(HttpStatus.CONFLICT)
-//						.body(new ApiResponse<>("Username already exists! Try different.", null));
-//			}
-//			
-//			user.setUsername(userDTO.getUsername());
-//			user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-//			user.setRoles(userDTO.getRoles());
-//			userRepository.save(user);
-//			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>("User updated successfully!", user));
-//		} else {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>("User not found!", null));
-//		}
-//	}
 
 	@Override
 	public ResponseEntity<ApiResponse<User>> updateuser(UserDTO userDTO) {

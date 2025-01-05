@@ -41,13 +41,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         authorize
                                 .requestMatchers("/menu/view","/user/adduser").permitAll()
-//                                .requestMatchers(HttpMethod.POST, "/api/menuItems/**").hasRole("ADMIN")
-//                                .requestMatchers(HttpMethod.PUT, "/api/menuItems/**").hasRole("ADMIN")
-//                                .requestMatchers(HttpMethod.DELETE, "/api/menuItems/**").hasRole("ADMIN")
-//                                .requestMatchers(HttpMethod.GET, "/api/customerOrders/**").authenticated()
-//                                .requestMatchers(HttpMethod.POST, "/api/customerOrders/**").hasAnyRole("ADMIN", "CUSTOMER")
-//                                .requestMatchers(HttpMethod.PUT, "/api/customerOrders/**").hasAnyRole("ADMIN", "CUSTOMER")
-//                                .requestMatchers(HttpMethod.DELETE, "/api/customerOrders/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 ).httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session

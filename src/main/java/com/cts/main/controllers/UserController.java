@@ -63,48 +63,6 @@ public class UserController {
 		return (ResponseEntity<ApiResponse<User>>) serviceResponse;
 	}
 
-//	@PutMapping("/updateuser")
-//	@PreAuthorize("hasRole('ROLE_ADMIN') or hasAuthority('ROLE_CUSTOMER')")
-//	public ResponseEntity<ApiResponse<User>> updateUser(@Valid @RequestBody UserDTO userDTO) {
-//	    logger.info("Attempting to update user with ID: {}", userDTO.getUser_id());
-//	    String authenticatedUsername = getAuthenticatedUsername();
-//
-//	    // Fetch user by ID from the service layer
-//	    Optional<User> optionalUser = userService.getUserById(userDTO.getUser_id());
-//
-//	    if (optionalUser.isPresent()) {
-//	        User user = optionalUser.get();
-//
-//	        // Check if the role being updated is "ROLE_ADMIN"
-//	        if ("ROLE_ADMIN".equals(userDTO.getRoles()) && !isAdmin()) {
-//	            logger.info("Permission denied: User does not have permission to assign the role of 'ROLE_ADMIN'.");
-//	            ApiResponse<User> response = new ApiResponse<>("You do not have permission to assign the role of 'ROLE_ADMIN'.", null);
-//	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-//	        }
-//
-//	        // Check if the authenticated user is an admin or the same as the user being updated
-//	        if (!isAdmin() && !authenticatedUsername.equals(user.getUsername())) {
-//	            logger.info("Permission denied: User does not have permission to update this user.");
-//	            ApiResponse<User> response = new ApiResponse<>("You do not have permission to update this user.", null);
-//	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-//	        }
-//
-//	        // Proceed with the update process
-//	        ResponseEntity<ApiResponse<User>> serviceResponse = (ResponseEntity<ApiResponse<User>>) userService.updateuser(userDTO);
-//	        if (serviceResponse.getStatusCode().is2xxSuccessful()) {
-//	            ApiResponse<User> apiResponse = serviceResponse.getBody();
-//	            User updatedUser = apiResponse != null ? apiResponse.getData() : null;
-//	            ApiResponse<User> response = new ApiResponse<>("User updated successfully!", updatedUser);
-//	            logger.info("User updated successfully with ID: {}", userDTO.getUser_id());
-//	            return ResponseEntity.ok(response);
-//	        }
-//	        return (ResponseEntity<ApiResponse<User>>) serviceResponse;
-//	    } else {
-//	        logger.info("User not found with ID: {}", userDTO.getUser_id());
-//	        ApiResponse<User> response = new ApiResponse<>("User not found.", null);
-//	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-//	    }
-//	}
 
 	@PutMapping("/updateuser")
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasAuthority('ROLE_CUSTOMER')")
@@ -123,6 +81,13 @@ public class UserController {
 		logger.info("Number of users fetched: {}", users.size());
 		return ResponseEntity.ok(response);
 	}
+	
+	
+	
+	
+	
+	
+	
 
 //-------------------------------------------------------------------------------------
 
